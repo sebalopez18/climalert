@@ -21,7 +21,10 @@ public class Email {
         this.enviado = false;
     }
 
+    //No uso este metodo ya que el envio se cubre en el service
+
+    /*
     public void enviar() {
         //TODO: Implementación pendiente. Podríamos usar adapters
-    }
+    }*/
 } 

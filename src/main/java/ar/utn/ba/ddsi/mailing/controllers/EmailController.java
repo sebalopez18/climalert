@@ -23,4 +23,4 @@ public class EmailController {
     public List<Email> obtenerEmails(@RequestParam(required = false) Boolean pendiente) {
         return emailService.obtenerEmails(pendiente);
     }
-} 
+}

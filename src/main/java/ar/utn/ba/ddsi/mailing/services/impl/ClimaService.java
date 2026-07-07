@@ -12,13 +12,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class ClimaService implements IClimaService {
     private static final Logger logger = LoggerFactory.getLogger(ClimaService.class);
-    private static final String[] CIUDADES_ARGENTINA = {
-        "Buenos Aires", "Cordoba", "Rosario", "Mendoza", "Tucuman",
-        "La Plata", "Mar del Plata", "Salta", "Santa Fe", "San Juan"
-    };
+    private static final String ciudadElegida = "Cordoba";
 
     private final IClimaRepository climaRepository;
     private final WebClient webClient;
@@ -36,12 +36,12 @@ public class ClimaService implements IClimaService {
     }
 
     @Override
-    public Mono<Void> actualizarClimaCiudades() {
-        return Flux.fromArray(CIUDADES_ARGENTINA)
+    public Mono<Void> actualizarClimaCiudad() {
+        return Mono.just(ciudadElegida)
             .flatMap(this::obtenerClimaDeAPI)
             .flatMap(clima -> {
                 climaRepository.save(clima);
-                logger.info("Clima actualizado para: {}", clima.getCiudad());
+                logger.info("Clima de {} actualizado", ciudadElegida);
                 return Mono.empty();
             })
             .onErrorResume(e -> {

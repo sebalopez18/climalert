@@ -21,4 +21,4 @@ public class EmailScheduler {
     public void loguearEmailsPendientes() {
         emailService.loguearEmailsPendientes();
     }
-} 
+}

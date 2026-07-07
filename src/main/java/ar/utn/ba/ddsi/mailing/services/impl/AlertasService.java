@@ -15,8 +15,8 @@ import java.util.List;
 @Service
 public class AlertasService implements IAlertasService {
     private static final Logger logger = LoggerFactory.getLogger(AlertasService.class);
-    private static final double TEMPERATURA_ALERTA = 35.0;
-    private static final int HUMEDAD_ALERTA = 60;
+    private static final double TEMPERATURA_ALERTA = 1;//35.0;
+    private static final int HUMEDAD_ALERTA = 1;//60;
 
     private final IClimaRepository climaRepository;
     private final EmailService emailService;
@@ -88,7 +88,7 @@ public class AlertasService implements IAlertasService {
             emailService.crearEmail(email);
         }
         
-        logger.info("Email de alerta generado para {} - Enviado a {} destinatarios", 
+        logger.info("Email de alerta generado para {} - con destinatarios: {} destinatarios",
             clima.getCiudad(), destinatarios.size());
     }
 } 

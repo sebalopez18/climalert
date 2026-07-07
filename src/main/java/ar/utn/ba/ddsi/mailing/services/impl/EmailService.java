@@ -3,8 +3,12 @@ package ar.utn.ba.ddsi.mailing.services.impl;
 import ar.utn.ba.ddsi.mailing.models.entities.Email;
 import ar.utn.ba.ddsi.mailing.models.repositories.IEmailRepository;
 import ar.utn.ba.ddsi.mailing.services.IEmailService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -13,8 +17,11 @@ public class EmailService implements IEmailService {
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     private final IEmailRepository emailRepository;
 
-    public EmailService(IEmailRepository emailRepository) {
+    JavaMailSender javaMailSender;
+
+    public EmailService(IEmailRepository emailRepository, JavaMailSender javaMailSender) {
         this.emailRepository = emailRepository;
+        this.javaMailSender = javaMailSender;
     }
 
     @Override
@@ -25,6 +32,7 @@ public class EmailService implements IEmailService {
     @Override
     public List<Email> obtenerEmails(Boolean pendiente) {
         if (pendiente != null) {
+
             return emailRepository.findByEnviado(!pendiente);
         }
         return emailRepository.findAll();
@@ -34,7 +42,21 @@ public class EmailService implements IEmailService {
     public void procesarPendientes() {
         List<Email> pendientes = emailRepository.findByEnviado(false);
         for (Email email : pendientes) {
-            email.enviar();
+
+            try
+            {
+                MimeMessage mensaje = javaMailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+                helper.setTo(email.getDestinatario());
+                helper.setText(email.getContenido());
+                helper.setFrom(email.getRemitente());
+                mensaje.setSubject("Notificacion de clima");
+                javaMailSender.send(mensaje);
+            }
+            catch(MessagingException e)
+            {
+                throw new RuntimeException(e);
+            }
             email.setEnviado(true);
             emailRepository.save(email);
         }
